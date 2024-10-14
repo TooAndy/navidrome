@@ -12,7 +12,7 @@ jobs:
       - name: Checkout your repository
         uses: actions/checkout@v3
         with:
-          persist-credentials: true
+          persist-credentials: false
           fetch-depth: 0  # 完整克隆历史
 
       - name: Set up Git
