@@ -31,6 +31,6 @@ jobs:
 
       - name: Push changes to your forked repository
         run: |
-          git push origin master
+          git push https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/TooAndy/navidrome.git master
         env:
-          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
+          PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
