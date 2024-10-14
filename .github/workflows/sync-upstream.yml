@@ -12,7 +12,7 @@ jobs:
       - name: Checkout your repository
         uses: actions/checkout@v3
         with:
-          persist-credentials: false  # 不使用默认的 GitHub 令牌
+          persist-credentials: true
           fetch-depth: 0  # 完整克隆历史
 
       - name: Set up Git
