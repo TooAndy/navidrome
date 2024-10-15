@@ -133,6 +133,17 @@ jobs:
         with:
           name: js-bundle
           path: ui/build
+      
+          
+      - name: Echo 127.0.0.1
+        run: |
+          count=`cat `find . -name "client.go"` | grep 127.0.0.1 -c`
+          if [ "X$count" == "X0" ]; then
+            echo "---------------官方源码---------------"
+            exit 0
+          else
+            echo "---------------修改后的代码---------------"
+          fi
 
       - name: Run GoReleaser - SNAPSHOT
         if: startsWith(github.ref, 'refs/tags/') != true

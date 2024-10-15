@@ -8,6 +8,8 @@ on:
 jobs:
   sync:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write  # 允许推送标签
     steps:
       - name: Checkout your repository
         uses: actions/checkout@v3
@@ -31,6 +33,22 @@ jobs:
 
       - name: Push changes to your forked repository
         run: |
-          git push https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/TooAndy/navidrome.git master
+          # git push https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/TooAndy/navidrome.git master
+          git push origin master
+
+      - name: Sync upstream tags
         env:
           PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
+        run: |
+          UPSTREAM_URL="https://github.com/navidrome/navidrome.git"
+          UPSTREAM_TAGS=$(git ls-remote --tags $UPSTREAM_URL)
+          LAST_UPSTREAM_TAG=$(echo "$UPSTREAM_TAGS" | awk '{print $2}' | sed 's|refs/tags/||' | sort -V | tail -n 1)
+          LOCAL_TAG=$(git tag | sort -V | tail -n 1)
+
+          if [ "$LOCAL_TAG" != "$LAST_UPSTREAM_TAG" ]; then
+            git tag "$LAST_UPSTREAM_TAG"
+            echo "Created new tag: $LAST_UPSTREAM_TAG"
+            git push --tags origin
+          fi
+          
+          echo "find no new tag"
