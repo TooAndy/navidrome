@@ -1,6 +1,6 @@
 {
 "artists": {
-"href": "https://api.spotify.com/v1/search?query=U2&type=artist&offset=0&limit=20",
+"href": "http://127.0.0.1:22522/spotify/search?query=U2&type=artist&offset=0&limit=20",
 "items": [
 {
 "external_urls": {
@@ -15,7 +15,7 @@
 "permanent wave",
 "rock"
 ],
-"href": "https://api.spotify.com/v1/artists/51Blml2LZPmy7TTiAg47vQ",
+"href": "http://127.0.0.1:22522/spotify/artists/51Blml2LZPmy7TTiAg47vQ",
 "id": "51Blml2LZPmy7TTiAg47vQ",
 "images": [
 {
@@ -48,7 +48,7 @@
 "total": 1008
 },
 "genres": [],
-"href": "https://api.spotify.com/v1/artists/6Yi6ndhYVLUaYu7rEqUCPT",
+"href": "http://127.0.0.1:22522/spotify/artists/6Yi6ndhYVLUaYu7rEqUCPT",
 "id": "6Yi6ndhYVLUaYu7rEqUCPT",
 "images": [
 {
@@ -81,7 +81,7 @@
 "total": 658
 },
 "genres": [],
-"href": "https://api.spotify.com/v1/artists/5TucOfYYQ8HPdDdvsQZAZe",
+"href": "http://127.0.0.1:22522/spotify/artists/5TucOfYYQ8HPdDdvsQZAZe",
 "id": "5TucOfYYQ8HPdDdvsQZAZe",
 "images": [
 {
@@ -114,7 +114,7 @@
 "total": 44
 },
 "genres": [],
-"href": "https://api.spotify.com/v1/artists/5s3rOzCczqCQrvueHRCZOx",
+"href": "http://127.0.0.1:22522/spotify/artists/5s3rOzCczqCQrvueHRCZOx",
 "id": "5s3rOzCczqCQrvueHRCZOx",
 "images": [
 {
@@ -147,7 +147,7 @@
 "total": 908
 },
 "genres": [],
-"href": "https://api.spotify.com/v1/artists/4CWC85PCLJ0yzPeJYXnQOG",
+"href": "http://127.0.0.1:22522/spotify/artists/4CWC85PCLJ0yzPeJYXnQOG",
 "id": "4CWC85PCLJ0yzPeJYXnQOG",
 "images": [],
 "name": "U2 Rocks",
@@ -164,7 +164,7 @@
 "total": 0
 },
 "genres": [],
-"href": "https://api.spotify.com/v1/artists/21114frei5NgrkMuLn6AOz",
+"href": "http://127.0.0.1:22522/spotify/artists/21114frei5NgrkMuLn6AOz",
 "id": "21114frei5NgrkMuLn6AOz",
 "images": [],
 "name": "U2A9F",
@@ -181,7 +181,7 @@
 "total": 878
 },
 "genres": [],
-"href": "https://api.spotify.com/v1/artists/3dhoDqkI6atVLE43nkx8VZ",
+"href": "http://127.0.0.1:22522/spotify/artists/3dhoDqkI6atVLE43nkx8VZ",
 "id": "3dhoDqkI6atVLE43nkx8VZ",
 "images": [],
 "name": "LMC vs U2",
@@ -198,7 +198,7 @@
 "total": 989
 },
 "genres": [],
-"href": "https://api.spotify.com/v1/artists/5bi7xpKp2mDDSnFfQkBEjR",
+"href": "http://127.0.0.1:22522/spotify/artists/5bi7xpKp2mDDSnFfQkBEjR",
 "id": "5bi7xpKp2mDDSnFfQkBEjR",
 "images": [
 {
@@ -231,7 +231,7 @@
 "total": 18
 },
 "genres": [],
-"href": "https://api.spotify.com/v1/artists/3H7E05uiFuqgwBQrXFaQIm",
+"href": "http://127.0.0.1:22522/spotify/artists/3H7E05uiFuqgwBQrXFaQIm",
 "id": "3H7E05uiFuqgwBQrXFaQIm",
 "images": [
 {
@@ -264,7 +264,7 @@
 "total": 13
 },
 "genres": [],
-"href": "https://api.spotify.com/v1/artists/6BMzJXRYmy28QVMZc09rGB",
+"href": "http://127.0.0.1:22522/spotify/artists/6BMzJXRYmy28QVMZc09rGB",
 "id": "6BMzJXRYmy28QVMZc09rGB",
 "images": [
 {
@@ -297,7 +297,7 @@
 "total": 64
 },
 "genres": [],
-"href": "https://api.spotify.com/v1/artists/4MtRKC7apgAyAd5uUjN3L4",
+"href": "http://127.0.0.1:22522/spotify/artists/4MtRKC7apgAyAd5uUjN3L4",
 "id": "4MtRKC7apgAyAd5uUjN3L4",
 "images": [
 {
@@ -335,7 +335,7 @@
 "europop",
 "hip house"
 ],
-"href": "https://api.spotify.com/v1/artists/18JD8DVlD1fakDAw7E9LFC",
+"href": "http://127.0.0.1:22522/spotify/artists/18JD8DVlD1fakDAw7E9LFC",
 "id": "18JD8DVlD1fakDAw7E9LFC",
 "images": [
 {
@@ -368,7 +368,7 @@
 "total": 10
 },
 "genres": [],
-"href": "https://api.spotify.com/v1/artists/0goZ9x7MGZF5rlaJOFrj1F",
+"href": "http://127.0.0.1:22522/spotify/artists/0goZ9x7MGZF5rlaJOFrj1F",
 "id": "0goZ9x7MGZF5rlaJOFrj1F",
 "images": [
 {
@@ -401,7 +401,7 @@
 "total": 318
 },
 "genres": [],
-"href": "https://api.spotify.com/v1/artists/76pyFXpXITp0aRz4j3SyGJ",
+"href": "http://127.0.0.1:22522/spotify/artists/76pyFXpXITp0aRz4j3SyGJ",
 "id": "76pyFXpXITp0aRz4j3SyGJ",
 "images": [
 {
@@ -434,7 +434,7 @@
 "total": 9504
 },
 "genres": [],
-"href": "https://api.spotify.com/v1/artists/0j5kVHxvTgUN4nBIPKCLRJ",
+"href": "http://127.0.0.1:22522/spotify/artists/0j5kVHxvTgUN4nBIPKCLRJ",
 "id": "0j5kVHxvTgUN4nBIPKCLRJ",
 "images": [
 {
@@ -467,7 +467,7 @@
 "total": 121
 },
 "genres": [],
-"href": "https://api.spotify.com/v1/artists/1TxfUEM21kYVWinDMOqWwb",
+"href": "http://127.0.0.1:22522/spotify/artists/1TxfUEM21kYVWinDMOqWwb",
 "id": "1TxfUEM21kYVWinDMOqWwb",
 "images": [
 {
@@ -500,7 +500,7 @@
 "total": 2
 },
 "genres": [],
-"href": "https://api.spotify.com/v1/artists/0iwKcRbay1SnKY1IH8MNL8",
+"href": "http://127.0.0.1:22522/spotify/artists/0iwKcRbay1SnKY1IH8MNL8",
 "id": "0iwKcRbay1SnKY1IH8MNL8",
 "images": [
 {
@@ -535,7 +535,7 @@
 "genres": [
 "rhythm game"
 ],
-"href": "https://api.spotify.com/v1/artists/2wTNs9AmIOv5Fjs66HK1tV",
+"href": "http://127.0.0.1:22522/spotify/artists/2wTNs9AmIOv5Fjs66HK1tV",
 "id": "2wTNs9AmIOv5Fjs66HK1tV",
 "images": [
 {
@@ -571,7 +571,7 @@
 "j-pixie",
 "japanese math rock"
 ],
-"href": "https://api.spotify.com/v1/artists/1oUiDfTNWZCprR1GeRPs0i",
+"href": "http://127.0.0.1:22522/spotify/artists/1oUiDfTNWZCprR1GeRPs0i",
 "id": "1oUiDfTNWZCprR1GeRPs0i",
 "images": [
 {
@@ -604,7 +604,7 @@
 "total": 236
 },
 "genres": [],
-"href": "https://api.spotify.com/v1/artists/6diA719p2OaW6zQnXCbRO9",
+"href": "http://127.0.0.1:22522/spotify/artists/6diA719p2OaW6zQnXCbRO9",
 "id": "6diA719p2OaW6zQnXCbRO9",
 "images": [
 {
@@ -630,7 +630,7 @@
 }
 ],
 "limit": 20,
-"next": "https://api.spotify.com/v1/search?query=U2&type=artist&offset=20&limit=20",
+"next": "http://127.0.0.1:22522/spotify/search?query=U2&type=artist&offset=20&limit=20",
 "offset": 0,
 "previous": null,
 "total": 922

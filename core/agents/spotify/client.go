@@ -15,7 +15,7 @@ import (
 	"github.com/navidrome/navidrome/log"
 )
 
-const apiBaseUrl = "https://api.spotify.com/v1/"
+const apiBaseUrl = "http://127.0.0.1:22522/spotify/"
 
 var (
 	ErrNotFound = errors.New("spotify: not found")
@@ -36,10 +36,7 @@ type client struct {
 }
 
 func (c *client) searchArtists(ctx context.Context, name string, limit int) ([]Artist, error) {
-	token, err := c.authorize(ctx)
-	if err != nil {
-		return nil, err
-	}
+    token := ""
 
 	params := url.Values{}
 	params.Add("type", "artist")
@@ -51,7 +48,7 @@ func (c *client) searchArtists(ctx context.Context, name string, limit int) ([]A
 	req.Header.Add("Authorization", "Bearer "+token)
 
 	var results SearchResults
-	err = c.makeRequest(req, &results)
+	err := c.makeRequest(req, &results)
 	if err != nil {
 		return nil, err
 	}

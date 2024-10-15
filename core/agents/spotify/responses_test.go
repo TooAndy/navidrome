@@ -21,7 +21,7 @@ var _ = Describe("Responses", func() {
 			Expect(u2.Name).To(Equal("U2"))
 			Expect(u2.Genres).To(ContainElements("irish rock", "permanent wave", "rock"))
 			Expect(u2.ID).To(Equal("51Blml2LZPmy7TTiAg47vQ"))
-			Expect(u2.HRef).To(Equal("https://api.spotify.com/v1/artists/51Blml2LZPmy7TTiAg47vQ"))
+			Expect(u2.HRef).To(Equal("http://127.0.0.1:22522/spotify/artists/51Blml2LZPmy7TTiAg47vQ"))
 			Expect(u2.Images[0].URL).To(Equal("https://i.scdn.co/image/e22d5c0c8139b8439440a69854ed66efae91112d"))
 			Expect(u2.Images[0].Width).To(Equal(640))
 			Expect(u2.Images[0].Height).To(Equal(640))

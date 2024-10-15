@@ -23,7 +23,7 @@ var _ = Describe("client", func() {
 	Describe("ArtistImages", func() {
 		It("returns artist images from a successful request", func() {
 			f, _ := os.Open("tests/fixtures/spotify.search.artist.json")
-			httpClient.mock("https://api.spotify.com/v1/search", http.Response{Body: f, StatusCode: 200})
+			httpClient.mock("http://127.0.0.1:22522/spotify/search", http.Response{Body: f, StatusCode: 200})
 			httpClient.mock("https://accounts.spotify.com/api/token", http.Response{
 				StatusCode: 200,
 				Body:       io.NopCloser(bytes.NewBufferString(`{"access_token": "NEW_ACCESS_TOKEN","token_type": "Bearer","expires_in": 3600}`)),
@@ -42,11 +42,11 @@ var _ = Describe("client", func() {
 		})
 
 		It("fails if artist was not found", func() {
-			httpClient.mock("https://api.spotify.com/v1/search", http.Response{
+			httpClient.mock("http://127.0.0.1:22522/spotify/search", http.Response{
 				StatusCode: 200,
 				Body: io.NopCloser(bytes.NewBufferString(`{
 						  "artists" : {
-							"href" : "https://api.spotify.com/v1/search?query=dasdasdas%2Cdna&type=artist&offset=0&limit=20",
+							"href" : "http://127.0.0.1:22522/spotify/search?query=dasdasdas%2Cdna&type=artist&offset=0&limit=20",
 							"items" : [ ], "limit" : 20, "next" : null, "offset" : 0, "previous" : null, "total" : 0
 						  }}`)),
 			})
@@ -61,7 +61,7 @@ var _ = Describe("client", func() {
 
 		It("fails if not able to authorize", func() {
 			f, _ := os.Open("tests/fixtures/spotify.search.artist.json")
-			httpClient.mock("https://api.spotify.com/v1/search", http.Response{Body: f, StatusCode: 200})
+			httpClient.mock("http://127.0.0.1:22522/spotify/search", http.Response{Body: f, StatusCode: 200})
 			httpClient.mock("https://accounts.spotify.com/api/token", http.Response{
 				StatusCode: 400,
 				Body:       io.NopCloser(bytes.NewBufferString(`{"error":"invalid_client","error_description":"Invalid client"}`)),
