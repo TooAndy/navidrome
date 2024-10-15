@@ -93,7 +93,7 @@ var _ = Describe("client", func() {
 			})
 
 			_, err := client.authorize(context.TODO())
-			Expect(err).To(BeNil())
+			Expect(err).To(MatchError("spotify error(invalid_client): Invalid client"))
 		})
 
 		It("fails on invalid JSON response", func() {
