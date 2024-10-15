@@ -137,13 +137,12 @@ jobs:
           
       - name: Echo 127.0.0.1
         run: |
-          count=$(cat `find . -name "client.go"` | grep 127.0.0.1 -c)
-          if [ "X$count" == "X0" ]; then
-            echo "---------------官方源码---------------"
-            exit 0
-          else
-            echo "---------------修改后的代码---------------"
-          fi
+          echo "---------------"
+          ls -lah
+          echo "---------------"
+          find . -name "client.go"
+          echo "---------------"
+          cat `find . -name "client.go"` | grep 127.0.0.1
 
       - name: Run GoReleaser - SNAPSHOT
         if: startsWith(github.ref, 'refs/tags/') != true
