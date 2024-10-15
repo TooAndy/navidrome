@@ -36,7 +36,7 @@ type client struct {
 }
 
 func (c *client) searchArtists(ctx context.Context, name string, limit int) ([]Artist, error) {
-    token := ""
+	token := ""
 
 	params := url.Values{}
 	params.Add("type", "artist")
