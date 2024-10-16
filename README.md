@@ -47,7 +47,7 @@ services:
     volumes:
       - /path/to/your/music:/music # 如果需要 navidrome 将艺术家和专辑封面下载到音乐路径中, 需要和 navidrome 的卷设置相同.
     ports:
-      - 22522:22522   # 外部端口需要设置为 22522, 因为 tooandy/navidrome 容器默认访问 22522 端口. 如果需要修改端口, 建议石笋 navichina 项目中的 build-navidrome.sh 脚本重新构建一个镜像
+      - 22522:22522   # 外部端口需要设置为 22522, 因为 tooandy/navidrome 容器默认访问 22522 端口. 如果需要修改端口, 建议使用 navichina 项目中的 build-navidrome.sh 脚本重新构建一个镜像
 ```
 
 ------
