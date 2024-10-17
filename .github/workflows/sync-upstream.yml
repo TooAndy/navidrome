@@ -48,13 +48,12 @@ jobs:
           PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
         run: |
           LAST_UPSTREAM_TAG=$(curl -s https://api.github.com/repos/navidrome/navidrome/tags | jq -r '.[0].name')
-          LOCAL_TAG=$(git tag | sort -V | tail -n 1)
-
-          if [ "$LOCAL_TAG" != "$LAST_UPSTREAM_TAG" ]; then
+          exists=`git tag | grep $LAST_UPSTREAM_TAG -c`
+          if [ "X${exists}" != "X0" ]; then
             git tag "$LAST_UPSTREAM_TAG"
             echo "Created new tag: $LAST_UPSTREAM_TAG"
             git push --force --tags https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/TooAndy/navidrome.git 
           else
-            echo "find no new tag"
+            echo "find no new tag, exit"
           fi
           
