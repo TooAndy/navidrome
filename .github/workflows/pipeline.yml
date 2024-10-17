@@ -288,7 +288,9 @@ jobs:
           hub_repository: ${{ vars.DOCKER_HUB_REPO }}
           hub_username: ${{ secrets.DOCKER_HUB_USERNAME }}
           hub_password: ${{ secrets.DOCKER_HUB_PASSWORD }}
-
+      - name: Check_REPO_LOWER
+        run: |
+          echo ${{ env.REPO_LOWER }}
       - name: Create manifest list and push to ghcr.io
         working-directory: /tmp/digests
         run: |
