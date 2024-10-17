@@ -178,6 +178,8 @@ jobs:
       DOCKER_BUILD_SUMMARY: false
       GIT_SHA: ${{ needs.git-version.outputs.git_sha }}
       GIT_TAG: ${{ needs.git-version.outputs.git_tag }}
+    outputs:
+      REPO_LOWER: ${{ steps.lower_repo.outputs.lower_repo_name}}
     steps:
       - name: Sanitize platform name
         id: set-platform
@@ -218,6 +220,14 @@ jobs:
           retention-days: 7
 
       # https://www.perplexity.ai/search/can-i-have-multiple-push-to-di-4P3ToaZFQtmVROuhaZMllQ
+
+      - name: Convert github.repository to lowercase
+        id: lower_repo
+        run: |
+          REPO_LOWER=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
+          echo "REPO_LOWER=$REPO_LOWER" >> $GITHUB_ENV
+          echo "::set-output name=lower_repo_name::$REPO_LOWER"
+
       - name: Build and push image by digest
         id: push-image
         if: env.IS_LINUX == 'true' && env.IS_DOCKER_PUSH_CONFIGURED == 'true' && env.IS_ARMV5 == 'false'
@@ -233,7 +243,7 @@ jobs:
             CROSS_TAGLIB_VERSION=${{ env.CROSS_TAGLIB_VERSION }}
           outputs: |
             type=image,name=${{ steps.docker.outputs.hub_repository }},push-by-digest=true,name-canonical=true,push=${{ steps.docker.outputs.hub_enabled }}
-            type=image,name=ghcr.io/${{ github.repository }},push-by-digest=true,name-canonical=true,push=true
+            type=image,name=ghcr.io/${{ env.REPO_LOWER }},push-by-digest=true,name-canonical=true,push=true
 
       - name: Export digest
         if: env.IS_LINUX == 'true' && env.IS_DOCKER_PUSH_CONFIGURED == 'true' && env.IS_ARMV5 == 'false'
@@ -257,7 +267,8 @@ jobs:
     needs: [build, check-push-enabled]
     if: needs.check-push-enabled.outputs.is_enabled == 'true'
     env:
-      REGISTRY_IMAGE: ghcr.io/${{ github.repository }}
+      REGISTRY_IMAGE: ghcr.io/${{ needs.build.outputs.REPO_LOWER }}
+      REPO_LOWER: ${{ needs.build.outputs.REPO_LOWER }}
     steps:
       - uses: actions/checkout@v4
 
@@ -303,8 +314,8 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          for artifact in $(gh api repos/${{ github.repository }}/actions/artifacts | jq -r '.artifacts[] | select(.name | startswith("digests-")) | .id'); do
-            gh api --method DELETE repos/${{ github.repository }}/actions/artifacts/$artifact
+          for artifact in $(gh api repos/${{ env.REPO_LOWER }}/actions/artifacts | jq -r '.artifacts[] | select(.name | startswith("digests-")) | .id'); do
+            gh api --method DELETE repos/${{ env.REPO_LOWER }}/actions/artifacts/$artifact
           done
 
 
