@@ -32,24 +32,29 @@ jobs:
 
       - name: Push changes to your forked repository
         run: |
-          git push https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/TooAndy/navidrome.git master
+          git push --force https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/TooAndy/navidrome.git master
   
   tag-watcher:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout your repository
+        uses: actions/checkout@v3
+        with:
+          persist-credentials: false
+          fetch-depth: 0  # 完整克隆历史
+
       - name: Sync upstream tags
         env:
           PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
         run: |
-          UPSTREAM_URL="https://github.com/navidrome/navidrome.git"
-          UPSTREAM_TAGS=$(git ls-remote --tags $UPSTREAM_URL)
-          LAST_UPSTREAM_TAG=$(echo "$UPSTREAM_TAGS" | awk '{print $2}' | sed 's|refs/tags/||' | sort -V | tail -n 1)
+          LAST_UPSTREAM_TAG=$(curl -s https://api.github.com/repos/navidrome/navidrome/tags | jq -r '.[0].name')
           LOCAL_TAG=$(git tag | sort -V | tail -n 1)
 
           if [ "$LOCAL_TAG" != "$LAST_UPSTREAM_TAG" ]; then
             git tag "$LAST_UPSTREAM_TAG"
             echo "Created new tag: $LAST_UPSTREAM_TAG"
-            git push --tags https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/TooAndy/navidrome.git 
+            git push --force --tags https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/TooAndy/navidrome.git 
+          else
+            echo "find no new tag"
           fi
           
-          echo "find no new tag"
