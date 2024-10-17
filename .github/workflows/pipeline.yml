@@ -180,7 +180,7 @@ jobs:
       GIT_SHA: ${{ needs.git-version.outputs.git_sha }}
       GIT_TAG: ${{ needs.git-version.outputs.git_tag }}
     outputs:
-      REPO_LOWER: ${{ steps.lower_repo.outputs.lower_repo_name}}
+      REPO_LOWER: ${{ steps.lower_repo.outputs.REPO_LOWER}}
     steps:
       - name: Sanitize platform name
         id: set-platform
@@ -227,7 +227,6 @@ jobs:
         run: |
           REPO_LOWER=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
           echo "REPO_LOWER=$REPO_LOWER" >> $GITHUB_ENV
-          echo "::set-output name=lower_repo_name::$REPO_LOWER"
 
       - name: Build and push image by digest
         id: push-image
