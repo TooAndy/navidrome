@@ -8,7 +8,6 @@ on:
 jobs:
   sync:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout your repository
         uses: actions/checkout@v3
@@ -36,6 +35,7 @@ jobs:
   
   tag-watcher:
     runs-on: ubuntu-latest
+    needs: [sync]
     steps:
       - name: Checkout your repository
         uses: actions/checkout@v3
