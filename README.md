@@ -2,9 +2,9 @@
 
 # Navidrome Music Server &nbsp;[![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/intent/tweet?text=Tired%20of%20paying%20for%20music%20subscriptions%2C%20and%20not%20finding%20what%20you%20really%20like%3F%20Roll%20your%20own%20streaming%20service%21&url=https://navidrome.org&via=navidrome)
 
-[![Last Release](https://img.shields.io/github/v/release/navidrome/navidrome?logo=github&label=latest&style=flat-square)](https://github.com/navidrome/navidrome/releases)
-[![Build](https://img.shields.io/github/actions/workflow/status/tooandy/navidrome/pipeline.yml?branch=master&logo=github&style=flat-square)](https://nightly.link/navidrome/navidrome/workflows/pipeline/master)
-[![Downloads](https://img.shields.io/github/downloads/navidrome/navidrome/total?logo=github&style=flat-square)](https://github.com/navidrome/navidrome/releases/latest)
+[![Last Release](https://img.shields.io/github/v/release/tooandy/navidrome?logo=github&label=latest&style=flat-square)](https://github.com/tooandy/navidrome/releases)
+[![Build](https://img.shields.io/github/actions/workflow/status/tooandy/navidrome/pipeline.yml?branch=master&logo=github&style=flat-square)](https://nightly.link/tooandy/navidrome/workflows/pipeline/master)
+[![Downloads](https://img.shields.io/github/downloads/tooandy/navidrome/total?logo=github&style=flat-square)](https://github.com/tooandy/navidrome/releases/latest)
 [![Docker Pulls](https://img.shields.io/docker/pulls/tooandy/navidrome?logo=docker&label=pulls&style=flat-square)](https://hub.docker.com/r/tooandy/navidrome)
 [![Dev Chat](https://img.shields.io/discord/671335427726114836?logo=discord&label=discord&style=flat-square)](https://discord.gg/xh7j7yF)
 [![Subreddit](https://img.shields.io/reddit/subreddit-subscribers/navidrome?logo=reddit&label=/r/navidrome&style=flat-square)](https://www.reddit.com/r/navidrome/)
