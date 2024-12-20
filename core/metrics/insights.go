@@ -10,12 +10,14 @@ import (
 	"runtime"
 	"runtime/debug"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/Masterminds/squirrel"
 	"github.com/google/uuid"
 	"github.com/navidrome/navidrome/conf"
 	"github.com/navidrome/navidrome/consts"
+	"github.com/navidrome/navidrome/core/auth"
 	"github.com/navidrome/navidrome/core/metrics/insights"
 	"github.com/navidrome/navidrome/log"
 	"github.com/navidrome/navidrome/model"
@@ -33,8 +35,8 @@ var (
 
 type insightsCollector struct {
 	ds         model.DataStore
-	lastRun    time.Time
-	lastStatus bool
+	lastRun    atomic.Int64
+	lastStatus atomic.Bool
 }
 
 func GetInstance(ds model.DataStore) Insights {
@@ -54,6 +56,7 @@ func GetInstance(ds model.DataStore) Insights {
 }
 
 func (c *insightsCollector) Run(ctx context.Context) {
+	ctx = auth.WithAdminUser(ctx, c.ds)
 	for {
 		c.sendInsights(ctx)
 		select {
@@ -66,7 +69,8 @@ func (c *insightsCollector) Run(ctx context.Context) {
 }
 
 func (c *insightsCollector) LastRun(context.Context) (timestamp time.Time, success bool) {
-	return c.lastRun, c.lastStatus
+	t := c.lastRun.Load()
+	return time.UnixMilli(t), c.lastStatus.Load()
 }
 
 func (c *insightsCollector) sendInsights(ctx context.Context) {
@@ -100,8 +104,8 @@ func (c *insightsCollector) sendInsights(ctx context.Context) {
 	}
 	log.Info(ctx, "Sent Insights data (for details see http://navidrome.org/docs/getting-started/insights", "data",
 		string(data), "server", consts.InsightsEndpoint, "status", resp.Status)
-	c.lastRun = time.Now()
-	c.lastStatus = resp.StatusCode < 300
+	c.lastRun.Store(time.Now().UnixMilli())
+	c.lastStatus.Store(resp.StatusCode < 300)
 	resp.Body.Close()
 }
 
@@ -147,6 +151,7 @@ var staticData = sync.OnceValue(func() insights.Data {
 
 	// Build info
 	data.Build.Settings, data.Build.GoVersion = buildInfo()
+	data.OS.Containerized = consts.InContainer
 
 	// OS info
 	data.OS.Type = runtime.GOOS
@@ -199,15 +204,45 @@ func (c *insightsCollector) collect(ctx context.Context) []byte {
 	data.Uptime = time.Since(consts.ServerStart).Milliseconds() / 1000
 
 	// Library info
-	data.Library.Tracks, _ = c.ds.MediaFile(ctx).CountAll()
-	data.Library.Albums, _ = c.ds.Album(ctx).CountAll()
-	data.Library.Artists, _ = c.ds.Artist(ctx).CountAll()
-	data.Library.Playlists, _ = c.ds.Playlist(ctx).Count()
-	data.Library.Shares, _ = c.ds.Share(ctx).CountAll()
-	data.Library.Radios, _ = c.ds.Radio(ctx).Count()
-	data.Library.ActiveUsers, _ = c.ds.User(ctx).CountAll(model.QueryOptions{
+	var err error
+	data.Library.Tracks, err = c.ds.MediaFile(ctx).CountAll()
+	if err != nil {
+		log.Trace(ctx, "Error reading tracks count", err)
+	}
+	data.Library.Albums, err = c.ds.Album(ctx).CountAll()
+	if err != nil {
+		log.Trace(ctx, "Error reading albums count", err)
+	}
+	data.Library.Artists, err = c.ds.Artist(ctx).CountAll()
+	if err != nil {
+		log.Trace(ctx, "Error reading artists count", err)
+	}
+	data.Library.Playlists, err = c.ds.Playlist(ctx).CountAll()
+	if err != nil {
+		log.Trace(ctx, "Error reading playlists count", err)
+	}
+	data.Library.Shares, err = c.ds.Share(ctx).CountAll()
+	if err != nil {
+		log.Trace(ctx, "Error reading shares count", err)
+	}
+	data.Library.Radios, err = c.ds.Radio(ctx).Count()
+	if err != nil {
+		log.Trace(ctx, "Error reading radios count", err)
+	}
+	data.Library.ActiveUsers, err = c.ds.User(ctx).CountAll(model.QueryOptions{
 		Filters: squirrel.Gt{"last_access_at": time.Now().Add(-7 * 24 * time.Hour)},
 	})
+	if err != nil {
+		log.Trace(ctx, "Error reading active users count", err)
+	}
+	if conf.Server.DevEnablePlayerInsights {
+		data.Library.ActivePlayers, err = c.ds.Player(ctx).CountByClient(model.QueryOptions{
+			Filters: squirrel.Gt{"last_seen": time.Now().Add(-7 * 24 * time.Hour)},
+		})
+		if err != nil {
+			log.Trace(ctx, "Error reading active players count", err)
+		}
+	}
 
 	// Memory info
 	var m runtime.MemStats

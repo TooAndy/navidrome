@@ -391,6 +391,7 @@
         "language": "Language",
         "defaultView": "Default View",
         "desktop_notifications": "Desktop Notifications",
+        "lastfmNotConfigured": "Last.fm API-Key is not configured",
         "lastfmScrobbling": "Scrobble to Last.fm",
         "listenBrainzScrobbling": "Scrobble to ListenBrainz",
         "replaygain": "ReplayGain Mode",
@@ -437,7 +438,11 @@
       "homepage": "Home page",
       "source": "Source code",
       "featureRequests": "Feature requests",
-      "lastInsightsCollection": "Last insights collection"
+      "lastInsightsCollection": "Last insights collection",
+      "insights": {
+        "disabled": "Disabled",
+        "waiting": "Waiting"
+      }
     }
   },
   "activity": {

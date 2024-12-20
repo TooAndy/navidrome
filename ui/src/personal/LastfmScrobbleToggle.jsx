@@ -3,15 +3,17 @@ import { useNotify, useTranslate } from 'react-admin'
 import {
   FormControl,
   FormControlLabel,
+  FormHelperText,
   LinearProgress,
   Switch,
+  Tooltip,
 } from '@material-ui/core'
 import { useInterval } from '../common'
 import { baseUrl, openInNewTab } from '../utils'
 import { httpClient } from '../dataProvider'
 
 const Progress = (props) => {
-  const { setLinked, setCheckingLink } = props
+  const { setLinked, setCheckingLink, apiKey } = props
   const notify = useNotify()
   let linkCheckDelay = 2000
   let linkChecks = 30
@@ -23,11 +25,9 @@ const Progress = (props) => {
     )
     const callbackUrl = `${window.location.origin}${callbackEndpoint}`
     openedTab.current = openInNewTab(
-      `https://www.last.fm/api/auth/?api_key=${localStorage.getItem(
-        'lastfm-apikey',
-      )}&cb=${callbackUrl}`,
+      `https://www.last.fm/api/auth/?api_key=${apiKey}&cb=${callbackUrl}`,
     )
-  }, [])
+  }, [apiKey])
 
   const endChecking = (success) => {
     linkCheckDelay = null
@@ -75,6 +75,18 @@ export const LastfmScrobbleToggle = (props) => {
   const translate = useTranslate()
   const [linked, setLinked] = useState(null)
   const [checkingLink, setCheckingLink] = useState(false)
+  const [apiKey, setApiKey] = useState(false)
+
+  useEffect(() => {
+    httpClient('/api/lastfm/link')
+      .then((response) => {
+        setLinked(response.json.status === true)
+        setApiKey(response.json.apiKey)
+      })
+      .catch(() => {
+        setLinked(false)
+      })
+  }, [setLinked, setApiKey])
 
   const toggleScrobble = () => {
     if (!linked) {
@@ -89,16 +101,6 @@ export const LastfmScrobbleToggle = (props) => {
     }
   }
 
-  useEffect(() => {
-    httpClient('/api/lastfm/link')
-      .then((response) => {
-        setLinked(response.json.status === true)
-      })
-      .catch(() => {
-        setLinked(false)
-      })
-  }, [])
-
   return (
     <FormControl>
       <FormControlLabel
@@ -107,7 +109,7 @@ export const LastfmScrobbleToggle = (props) => {
             id={'lastfm'}
             color="primary"
             checked={linked || checkingLink}
-            disabled={linked === null || checkingLink}
+            disabled={!apiKey || linked === null || checkingLink}
             onChange={toggleScrobble}
           />
         }
@@ -116,7 +118,16 @@ export const LastfmScrobbleToggle = (props) => {
         }
       />
       {checkingLink && (
-        <Progress setLinked={setLinked} setCheckingLink={setCheckingLink} />
+        <Progress
+          setLinked={setLinked}
+          setCheckingLink={setCheckingLink}
+          apiKey={apiKey}
+        />
+      )}
+      {!apiKey && (
+        <FormHelperText id="scrobble-lastfm-disabled-helper-text">
+          {translate('menu.personal.options.lastfmNotConfigured')}
+        </FormHelperText>
       )}
     </FormControl>
   )

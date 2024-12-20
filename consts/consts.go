@@ -3,6 +3,7 @@ package consts
 import (
 	"crypto/md5"
 	"fmt"
+	"os"
 	"path/filepath"
 	"strings"
 	"time"
@@ -57,7 +58,7 @@ const (
 	SkipScanFile = ".ndignore"
 
 	PlaceholderArtistArt = "artist-placeholder.webp"
-	PlaceholderAlbumArt  = "placeholder.png"
+	PlaceholderAlbumArt  = "album-placeholder.webp"
 	PlaceholderAvatar    = "logo-192x192.png"
 	UICoverArtSize       = 300
 	DefaultUIVolume      = 100
@@ -90,6 +91,7 @@ const (
 	InsightsIDKey          = "InsightsID"
 	InsightsEndpoint       = "https://insights.navidrome.org/collect"
 	InsightsUpdateInterval = 24 * time.Hour
+	InsightsInitialDelay   = 30 * time.Minute
 )
 
 var (
@@ -133,3 +135,11 @@ var (
 
 	ServerStart = time.Now()
 )
+
+var InContainer = func() bool {
+	// Check if the /.nddockerenv file exists
+	if _, err := os.Stat("/.nddockerenv"); err == nil {
+		return true
+	}
+	return false
+}()
