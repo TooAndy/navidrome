@@ -41,7 +41,7 @@ require (
 	github.com/onsi/gomega v1.36.1
 	github.com/pelletier/go-toml/v2 v2.2.3
 	github.com/pocketbase/dbx v1.11.0
-	github.com/pressly/goose/v3 v3.23.1
+	github.com/pressly/goose/v3 v3.24.0
 	github.com/prometheus/client_golang v1.20.5
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/sirupsen/logrus v1.9.3
@@ -52,7 +52,7 @@ require (
 	github.com/xrash/smetrics v0.0.0-20240521201337-686a1a2994c1
 	golang.org/x/exp v0.0.0-20241108190413-2d47ceb2692f
 	golang.org/x/image v0.23.0
-	golang.org/x/net v0.32.0
+	golang.org/x/net v0.33.0
 	golang.org/x/sync v0.10.0
 	golang.org/x/sys v0.28.0
 	golang.org/x/text v0.21.0
