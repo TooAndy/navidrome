@@ -116,6 +116,7 @@ type configOptions struct {
 	DevSidebarPlaylists              bool
 	DevShowArtistPage                bool
 	DevUIShowConfig                  bool
+	DevNewEventStream                bool
 	DevOffsetOptimize                int
 	DevArtworkMaxRequests            int
 	DevArtworkThrottleBacklogLimit   int
@@ -127,6 +128,7 @@ type configOptions struct {
 	DevInsightsInitialDelay          time.Duration
 	DevEnablePlayerInsights          bool
 	DevPluginCompilationTimeout      time.Duration
+	DevExternalArtistFetchMultiplier float64
 }
 
 type scannerOptions struct {
@@ -586,6 +588,7 @@ func setViperDefaults() {
 	viper.SetDefault("devsidebarplaylists", true)
 	viper.SetDefault("devshowartistpage", true)
 	viper.SetDefault("devuishowconfig", true)
+	viper.SetDefault("devneweventstream", true)
 	viper.SetDefault("devoffsetoptimize", 50000)
 	viper.SetDefault("devartworkmaxrequests", max(2, runtime.NumCPU()/3))
 	viper.SetDefault("devartworkthrottlebackloglimit", consts.RequestThrottleBacklogLimit)
@@ -597,6 +600,7 @@ func setViperDefaults() {
 	viper.SetDefault("devinsightsinitialdelay", consts.InsightsInitialDelay)
 	viper.SetDefault("devenableplayerinsights", true)
 	viper.SetDefault("devplugincompilationtimeout", time.Minute)
+	viper.SetDefault("devexternalartistfetchmultiplier", 1.5)
 }
 
 func init() {
