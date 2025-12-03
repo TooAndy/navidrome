@@ -87,8 +87,7 @@ type configOptions struct {
 	AuthRequestLimit                int
 	AuthWindowLength                time.Duration
 	PasswordEncryptionKey           string
-	ReverseProxyUserHeader          string
-	ReverseProxyWhitelist           string
+	ExtAuth                         extAuthOptions
 	Plugins                         pluginsOptions
 	PluginConfig                    map[string]map[string]string
 	HTTPSecurityHeaders             secureOptions       `json:",omitzero"`
@@ -107,32 +106,33 @@ type configOptions struct {
 	Agents                          string
 
 	// DevFlags. These are used to enable/disable debugging and incomplete features
-	DevLogLevels                     map[string]string `json:",omitempty"`
-	DevLogSourceLine                 bool
-	DevEnableProfiler                bool
-	DevAutoCreateAdminPassword       string
-	DevAutoLoginUsername             string
-	DevActivityPanel                 bool
-	DevActivityPanelUpdateRate       time.Duration
-	DevSidebarPlaylists              bool
-	DevShowArtistPage                bool
-	DevUIShowConfig                  bool
-	DevNewEventStream                bool
-	DevOffsetOptimize                int
-	DevArtworkMaxRequests            int
-	DevArtworkThrottleBacklogLimit   int
-	DevArtworkThrottleBacklogTimeout time.Duration
-	DevArtistInfoTimeToLive          time.Duration
-	DevAlbumInfoTimeToLive           time.Duration
-	DevExternalScanner               bool
-	DevScannerThreads                uint
-	DevSelectiveWatcher              bool
-	DevInsightsInitialDelay          time.Duration
-	DevEnablePlayerInsights          bool
-	DevEnablePluginsInsights         bool
-	DevPluginCompilationTimeout      time.Duration
-	DevExternalArtistFetchMultiplier float64
-	DevOptimizeDB                    bool
+	DevLogLevels                      map[string]string `json:",omitempty"`
+	DevLogSourceLine                  bool
+	DevEnableProfiler                 bool
+	DevAutoCreateAdminPassword        string
+	DevAutoLoginUsername              string
+	DevActivityPanel                  bool
+	DevActivityPanelUpdateRate        time.Duration
+	DevSidebarPlaylists               bool
+	DevShowArtistPage                 bool
+	DevUIShowConfig                   bool
+	DevNewEventStream                 bool
+	DevOffsetOptimize                 int
+	DevArtworkMaxRequests             int
+	DevArtworkThrottleBacklogLimit    int
+	DevArtworkThrottleBacklogTimeout  time.Duration
+	DevArtistInfoTimeToLive           time.Duration
+	DevAlbumInfoTimeToLive            time.Duration
+	DevExternalScanner                bool
+	DevScannerThreads                 uint
+	DevSelectiveWatcher               bool
+	DevInsightsInitialDelay           time.Duration
+	DevEnablePlayerInsights           bool
+	DevEnablePluginsInsights          bool
+	DevPluginCompilationTimeout       time.Duration
+	DevExternalArtistFetchMultiplier  float64
+	DevOptimizeDB                     bool
+	DevPreserveUnicodeInExternalCalls bool
 }
 
 type scannerOptions struct {
@@ -230,6 +230,11 @@ type pluginsOptions struct {
 	CacheSize string
 }
 
+type extAuthOptions struct {
+	TrustedSources string
+	UserHeader     string
+}
+
 var (
 	Server = &configOptions{}
 	hooks  []func()
@@ -247,6 +252,10 @@ func LoadFromFile(confFile string) {
 
 func Load(noConfigDump bool) {
 	parseIniFileConfiguration()
+
+	// Map deprecated options to their new names for backwards compatibility
+	mapDeprecatedOption("ReverseProxyWhitelist", "ExtAuth.TrustedSources")
+	mapDeprecatedOption("ReverseProxyUserHeader", "ExtAuth.UserHeader")
 
 	err := viper.Unmarshal(&Server)
 	if err != nil {
@@ -331,9 +340,16 @@ func Load(noConfigDump bool) {
 		Server.BaseScheme = u.Scheme
 	}
 
+	// Log configuration source
+	if Server.ConfigFile != "" {
+		log.Info("Loaded configuration", "file", Server.ConfigFile)
+	} else {
+		log.Warn("No configuration file found. Using default values. To specify a config file, use the --configfile flag or set the ND_CONFIGFILE environment variable.")
+	}
+
 	// Print current configuration if log level is Debug
 	if log.IsGreaterOrEqualTo(log.LevelDebug) && !noConfigDump {
-		prettyConf := pretty.Sprintf("Loaded configuration from '%s': %# v", Server.ConfigFile, Server)
+		prettyConf := pretty.Sprintf("Configuration: %# v", Server)
 		if Server.EnableLogRedacting {
 			prettyConf = log.Redact(prettyConf)
 		}
@@ -351,6 +367,7 @@ func Load(noConfigDump bool) {
 	logDeprecatedOptions("Scanner.GenreSeparators")
 	logDeprecatedOptions("Scanner.GroupAlbumReleases")
 	logDeprecatedOptions("DevEnableBufferedScrobble") // Deprecated: Buffered scrobbling is now always enabled and this option is ignored
+	logDeprecatedOptions("ReverseProxyWhitelist", "ReverseProxyUserHeader")
 
 	// Call init hooks
 	for _, hook := range hooks {
@@ -367,6 +384,14 @@ func logDeprecatedOptions(options ...string) {
 		if viper.InConfig(option) {
 			log.Warn(fmt.Sprintf("Option '%s' is deprecated and will be ignored in a future release", option))
 		}
+	}
+}
+
+// mapDeprecatedOption is used to provide backwards compatibility for deprecated options. It should be called after
+// the config has been read by viper, but before unmarshalling it into the Config struct.
+func mapDeprecatedOption(legacyName, newName string) {
+	if viper.IsSet(legacyName) {
+		viper.Set(newName, viper.Get(legacyName))
 	}
 }
 
@@ -538,8 +563,8 @@ func setViperDefaults() {
 	viper.SetDefault("authrequestlimit", 5)
 	viper.SetDefault("authwindowlength", 20*time.Second)
 	viper.SetDefault("passwordencryptionkey", "")
-	viper.SetDefault("reverseproxyuserheader", "Remote-User")
-	viper.SetDefault("reverseproxywhitelist", "")
+	viper.SetDefault("extauth.userheader", "Remote-User")
+	viper.SetDefault("extauth.trustedsources", "")
 	viper.SetDefault("prometheus.enabled", false)
 	viper.SetDefault("prometheus.metricspath", consts.PrometheusDefaultPath)
 	viper.SetDefault("prometheus.password", "")
@@ -613,6 +638,7 @@ func setViperDefaults() {
 	viper.SetDefault("devplugincompilationtimeout", time.Minute)
 	viper.SetDefault("devexternalartistfetchmultiplier", 1.5)
 	viper.SetDefault("devoptimizedb", true)
+	viper.SetDefault("devpreserveunicodeinexternalcalls", false)
 }
 
 func init() {
