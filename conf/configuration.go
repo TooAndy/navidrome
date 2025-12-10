@@ -344,6 +344,8 @@ func Load(noConfigDump bool) {
 	// Log configuration source
 	if Server.ConfigFile != "" {
 		log.Info("Loaded configuration", "file", Server.ConfigFile)
+	} else if hasNDEnvVars() {
+		log.Info("No configuration file found. Loaded configuration only from environment variables")
 	} else {
 		log.Warn("No configuration file found. Using default values. To specify a config file, use the --configfile flag or set the ND_CONFIGFILE environment variable.")
 	}
@@ -502,6 +504,16 @@ func AddHook(hook func()) {
 	hooks = append(hooks, hook)
 }
 
+// hasNDEnvVars checks if any ND_ prefixed environment variables are set (excluding ND_CONFIGFILE)
+func hasNDEnvVars() bool {
+	for _, env := range os.Environ() {
+		if strings.HasPrefix(env, "ND_") && !strings.HasPrefix(env, "ND_CONFIGFILE=") {
+			return true
+		}
+	}
+	return false
+}
+
 func setViperDefaults() {
 	viper.SetDefault("musicfolder", filepath.Join(".", "music"))
 	viper.SetDefault("cachefolder", "")
@@ -586,7 +598,7 @@ func setViperDefaults() {
 	viper.SetDefault("subsonic.appendsubtitle", true)
 	viper.SetDefault("subsonic.artistparticipations", false)
 	viper.SetDefault("subsonic.defaultreportrealpath", false)
-	viper.SetDefault("subsonic.legacyclients", "DSub")
+	viper.SetDefault("subsonic.legacyclients", "DSub,SubMusic")
 	viper.SetDefault("agents", "lastfm,spotify,deezer")
 	viper.SetDefault("lastfm.enabled", true)
 	viper.SetDefault("lastfm.language", "en")
