@@ -49,6 +49,7 @@ func (e extractor) Version() string {
 func (e extractor) extractMetadata(filePath string) (*metadata.Info, error) {
 	f, close, err := e.openFile(filePath)
 	if err != nil {
+		log.Warn("gotaglib: Error reading metadata from file. Skipping", "filePath", filePath, err)
 		return nil, err
 	}
 	defer close()
@@ -254,7 +255,7 @@ func parseTIPL(tags map[string][]string) {
 	}
 	var currentRole string
 	var currentValue []string
-	for _, part := range strings.Split(tipl[0], " ") {
+	for part := range strings.SplitSeq(tipl[0], " ") {
 		if _, ok := tiplMapping[part]; ok {
 			addRole(currentRole, currentValue)
 			currentRole = part
