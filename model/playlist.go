@@ -1,10 +1,13 @@
 package model
 
 import (
+	"path/filepath"
 	"slices"
 	"strconv"
 	"time"
 
+	"github.com/navidrome/navidrome/conf"
+	"github.com/navidrome/navidrome/consts"
 	"github.com/navidrome/navidrome/model/criteria"
 )
 
@@ -21,6 +24,7 @@ type Playlist struct {
 	Tracks    PlaylistTracks `structs:"-" json:"tracks,omitempty"`
 	Path      string         `structs:"path" json:"path"`
 	Sync      bool           `structs:"sync" json:"sync"`
+	ImageFile string         `structs:"image_file" json:"imageFile"`
 	CreatedAt time.Time      `structs:"created_at" json:"createdAt"`
 	UpdatedAt time.Time      `structs:"updated_at" json:"updatedAt"`
 
@@ -104,6 +108,13 @@ func (pls *Playlist) AddMediaFiles(mfs MediaFiles) {
 
 func (pls Playlist) CoverArtID() ArtworkID {
 	return artworkIDFromPlaylist(pls)
+}
+
+func (pls Playlist) ArtworkPath() string {
+	if pls.ImageFile == "" {
+		return ""
+	}
+	return filepath.Join(conf.Server.DataFolder, consts.ArtworkFolder, "playlist", pls.ImageFile)
 }
 
 type Playlists []Playlist

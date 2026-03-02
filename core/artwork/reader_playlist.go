@@ -8,6 +8,7 @@ import (
 	"image/draw"
 	"image/png"
 	"io"
+	"os"
 	"time"
 
 	"github.com/disintegration/imaging"
@@ -43,11 +44,25 @@ func (a *playlistArtworkReader) LastUpdated() time.Time {
 }
 
 func (a *playlistArtworkReader) Reader(ctx context.Context) (io.ReadCloser, string, error) {
-	ff := []sourceFunc{
+	return selectImageReader(ctx, a.artID,
+		a.fromPlaylistImage(),
 		a.fromGeneratedTiledCover(ctx),
 		fromAlbumPlaceholder(),
+	)
+}
+
+func (a *playlistArtworkReader) fromPlaylistImage() sourceFunc {
+	return func() (io.ReadCloser, string, error) {
+		absPath := a.pl.ArtworkPath()
+		if absPath == "" {
+			return nil, "", nil
+		}
+		f, err := os.Open(absPath)
+		if err != nil {
+			return nil, "", err
+		}
+		return f, absPath, nil
 	}
-	return selectImageReader(ctx, a.artID, ff...)
 }
 
 func (a *playlistArtworkReader) fromGeneratedTiledCover(ctx context.Context) sourceFunc {
