@@ -20,6 +20,7 @@ import {
   SizeField,
   isWritable,
 } from '../common'
+import config from '../config'
 import subsonic from '../subsonic'
 import { REST_URL } from '../consts'
 import { httpClient } from '../dataProvider'
@@ -134,7 +135,9 @@ const PlaylistDetails = (props) => {
 
   const imageUrl = subsonic.getCoverArtUrl(record, 300, true)
   const fullImageUrl = subsonic.getCoverArtUrl(record)
-  const canEdit = isWritable(record.ownerId)
+  const canEdit =
+    isWritable(record.ownerId) &&
+    (config.enableCoverArtUpload || localStorage.getItem('role') === 'admin')
 
   // Reset image state when playlist changes
   useEffect(() => {
@@ -246,7 +249,7 @@ const PlaylistDetails = (props) => {
                   <PhotoCameraIcon className={classes.overlayIcon} />
                 </IconButton>
               </Tooltip>
-              {record.imageFile && (
+              {record.uploadedImage && (
                 <Tooltip
                   title={translate('resources.playlist.actions.removeCover')}
                 >
