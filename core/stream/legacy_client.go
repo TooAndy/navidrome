@@ -1,7 +1,8 @@
-package transcode
+package stream
 
 import (
 	"context"
+	"strings"
 
 	"github.com/navidrome/navidrome/conf"
 	"github.com/navidrome/navidrome/log"
@@ -25,8 +26,15 @@ func buildLegacyClientInfo(mf *model.MediaFile, reqFormat string, reqBitRate int
 	}
 
 	if targetFormat != "" {
-		ci.DirectPlayProfiles = []DirectPlayProfile{
-			{Containers: []string{mf.Suffix}, AudioCodecs: []string{mf.AudioCodec()}, Protocols: []string{ProtocolHTTP}},
+		// Add a direct play profile for the source format when no explicit
+		// format was requested (bitrate-only downsampling) or when the
+		// requested format matches the source. When the client explicitly
+		// requests a different format, direct play must not match the
+		// source — otherwise the source is returned untranscoded.
+		if reqFormat == "" || strings.EqualFold(reqFormat, mf.Suffix) {
+			ci.DirectPlayProfiles = []DirectPlayProfile{
+				{Containers: []string{mf.Suffix}, AudioCodecs: []string{mf.AudioCodec()}, Protocols: []string{ProtocolHTTP}},
+			}
 		}
 		ci.TranscodingProfiles = []Profile{
 			{Container: targetFormat, AudioCodec: targetFormat, Protocol: ProtocolHTTP},
@@ -46,10 +54,9 @@ func buildLegacyClientInfo(mf *model.MediaFile, reqFormat string, reqBitRate int
 }
 
 // ResolveRequest uses MakeDecision to resolve legacy Subsonic stream parameters
-// into a fully specified StreamRequest.
-func (s *deciderService) ResolveRequest(ctx context.Context, mf *model.MediaFile, reqFormat string, reqBitRate int, offset int) StreamRequest {
-	var req StreamRequest
-	req.ID = mf.ID
+// into a fully specified Request.
+func (s *deciderService) ResolveRequest(ctx context.Context, mf *model.MediaFile, reqFormat string, reqBitRate int, offset int) Request {
+	var req Request
 	req.Offset = offset
 
 	if reqFormat == "raw" {
@@ -58,7 +65,7 @@ func (s *deciderService) ResolveRequest(ctx context.Context, mf *model.MediaFile
 	}
 
 	clientInfo := buildLegacyClientInfo(mf, reqFormat, reqBitRate)
-	decision, err := s.MakeDecision(ctx, mf, clientInfo, DecisionOptions{SkipProbe: true})
+	decision, err := s.MakeDecision(ctx, mf, clientInfo, TranscodeOptions{SkipProbe: true})
 	if err != nil {
 		log.Error(ctx, "Error making transcode decision, falling back to raw", "id", mf.ID, err)
 		req.Format = "raw"
