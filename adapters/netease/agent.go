@@ -4,7 +4,6 @@ import (
 	"context"
 	"net/http"
 	"strings"
-	"sync"
 
 	"github.com/navidrome/navidrome/conf"
 	"github.com/navidrome/navidrome/consts"
@@ -29,10 +28,9 @@ type neteaseClient interface {
 }
 
 type neteaseAgent struct {
-	ds          model.DataStore
-	client      neteaseClient
-	httpClient  httpDoer
-	cache       sync.Map
+	ds         model.DataStore
+	client     neteaseClient
+	httpClient httpDoer
 }
 
 func neteaseConstructor(ds model.DataStore) *neteaseAgent {
