@@ -1,0 +1,12 @@
+{
+  "result": {
+    "artistCount": 1,
+    "artists": [
+      {
+        "id": 6452,
+        "name": "周杰伦"
+      }
+    ]
+  },
+  "code": 200
+}

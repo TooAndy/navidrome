@@ -108,6 +108,7 @@ type configOptions struct {
 	LastFM                          lastfmOptions       `json:",omitzero"`
 	Deezer                          deezerOptions       `json:",omitzero"`
 	ListenBrainz                    listenBrainzOptions `json:",omitzero"`
+	NetEase                         neteaseOptions      `json:",omitzero"`
 	EnableScrobbleHistory           bool
 	Tags                            map[string]TagConf `json:",omitempty"`
 	Agents                          string
@@ -200,6 +201,11 @@ type listenBrainzOptions struct {
 	BaseURL         string
 	ArtistAlgorithm string
 	TrackAlgorithm  string
+}
+
+type neteaseOptions struct {
+	Enabled bool
+	ApiKey  string //nolint:gosec
 }
 
 type httpHeaderOptions struct {
