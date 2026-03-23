@@ -16,8 +16,8 @@ import (
 	"github.com/kr/pretty"
 	"github.com/navidrome/navidrome/consts"
 	"github.com/navidrome/navidrome/log"
+	"github.com/navidrome/navidrome/scheduler"
 	"github.com/navidrome/navidrome/utils/run"
-	"github.com/robfig/cron/v3"
 	"github.com/spf13/viper"
 )
 
@@ -71,6 +71,7 @@ type configOptions struct {
 	CoverArtPriority                string
 	CoverArtQuality                 int
 	ArtistArtPriority               string
+	ArtistImageFolder               string
 	DiscArtPriority                 string
 	LyricsPriority                  string
 	EnableGravatar                  bool
@@ -105,9 +106,9 @@ type configOptions struct {
 	Inspect                         inspectOptions      `json:",omitzero"`
 	Subsonic                        subsonicOptions     `json:",omitzero"`
 	LastFM                          lastfmOptions       `json:",omitzero"`
-	Spotify                         spotifyOptions      `json:",omitzero"`
 	Deezer                          deezerOptions       `json:",omitzero"`
 	ListenBrainz                    listenBrainzOptions `json:",omitzero"`
+	NetEase                         neteaseOptions      `json:",omitzero"`
 	EnableScrobbleHistory           bool
 	Tags                            map[string]TagConf `json:",omitempty"`
 	Agents                          string
@@ -187,11 +188,6 @@ type lastfmOptions struct {
 	Languages []string // Computed from Language, split by comma
 }
 
-type spotifyOptions struct {
-	ID     string
-	Secret string //nolint:gosec
-}
-
 type deezerOptions struct {
 	Enabled  bool
 	Language string
@@ -205,6 +201,11 @@ type listenBrainzOptions struct {
 	BaseURL         string
 	ArtistAlgorithm string
 	TrackAlgorithm  string
+}
+
+type neteaseOptions struct {
+	Enabled bool
+	ApiKey  string //nolint:gosec
 }
 
 type httpHeaderOptions struct {
@@ -346,6 +347,10 @@ func Load(noConfigDump bool) {
 			os.Exit(1)
 		}
 		log.SetOutput(out)
+	} else if os.Getenv("JOURNAL_STREAM") != "" {
+		// When running under systemd, prepend syslog priority prefixes so
+		// journald assigns the correct severity to each log line.
+		log.EnableJournalFormat()
 	}
 
 	log.SetLevelString(Server.LogLevel)
@@ -411,6 +416,7 @@ func Load(noConfigDump bool) {
 	// Parse Deezer.Language into Languages slice (comma-separated, with fallback to DefaultInfoLanguage)
 	Server.Deezer.Languages = parseLanguages(Server.Deezer.Language)
 
+	// Deprecated options
 	logDeprecatedOptions("Scanner.GenreSeparators", "")
 	logDeprecatedOptions("Scanner.GroupAlbumReleases", "")
 	logDeprecatedOptions("DevEnableBufferedScrobble", "") // Deprecated: Buffered scrobbling is now always enabled and this option is ignored
@@ -419,6 +425,9 @@ func Load(noConfigDump bool) {
 	logDeprecatedOptions("ReverseProxyUserHeader", "ExtAuth.UserHeader")
 	logDeprecatedOptions("HTTPSecurityHeaders.CustomFrameOptionsValue", "HTTPHeaders.FrameOptions")
 	logDeprecatedOptions("CoverJpegQuality", "CoverArtQuality")
+
+	// Removed options
+	logRemovedOptions("Spotify.ID", "Spotify.Secret")
 
 	// Call init hooks
 	for _, hook := range hooks {
@@ -441,6 +450,23 @@ func logDeprecatedOptions(oldName, newName string) {
 	}
 	if viper.InConfig(oldName) {
 		logWarning(oldName, newName)
+	}
+}
+
+// logRemovedOptions checks if the option is set, and if yes, outputs a warning message saying the option is
+// not available anymore
+func logRemovedOptions(options ...string) {
+	for _, option := range options {
+		envVar := "ND_" + strings.ToUpper(strings.ReplaceAll(option, ".", "_"))
+		logWarning := func(option string) {
+			log.Warn(fmt.Sprintf("Option '%s' is not available anymore and will be ignored. Please remove it from your config", option))
+		}
+		if viper.InConfig(option) {
+			logWarning(option)
+		}
+		if os.Getenv(envVar) != "" {
+			logWarning(envVar)
+		}
 	}
 }
 
@@ -482,7 +508,6 @@ func disableExternalServices() {
 	Server.EnableInsightsCollector = false
 	Server.EnableM3UExternalAlbumArt = false
 	Server.LastFM.Enabled = false
-	Server.Spotify.ID = ""
 	Server.Deezer.Enabled = false
 	Server.ListenBrainz.Enabled = false
 	Server.Agents = ""
@@ -551,15 +576,9 @@ func validateBackupSchedule() error {
 }
 
 func validateSchedule(schedule, field string) (string, error) {
-	if _, err := time.ParseDuration(schedule); err == nil {
-		schedule = "@every " + schedule
-	}
-	c := cron.New()
-	id, err := c.AddFunc(schedule, func() {})
+	_, err := scheduler.ParseCrontab(schedule)
 	if err != nil {
 		log.Error(fmt.Sprintf("Invalid %s. Please read format spec at https://pkg.go.dev/github.com/robfig/cron#hdr-CRON_Expression_Format", field), "schedule", schedule, err)
-	} else {
-		c.Remove(id)
 	}
 	return schedule, err
 }
@@ -712,14 +731,12 @@ func setViperDefaults() {
 	viper.SetDefault("subsonic.enableaveragerating", true)
 	viper.SetDefault("subsonic.legacyclients", "DSub")
 	viper.SetDefault("subsonic.minimalclients", "SubMusic")
-	viper.SetDefault("agents", "deezer,lastfm,spotify")
+	viper.SetDefault("agents", "deezer,lastfm,listenbrainz")
 	viper.SetDefault("lastfm.enabled", true)
 	viper.SetDefault("lastfm.language", consts.DefaultInfoLanguage)
 	viper.SetDefault("lastfm.apikey", "")
 	viper.SetDefault("lastfm.secret", "")
 	viper.SetDefault("lastfm.scrobblefirstartistonly", false)
-	viper.SetDefault("spotify.id", "")
-	viper.SetDefault("spotify.secret", "")
 	viper.SetDefault("deezer.enabled", true)
 	viper.SetDefault("deezer.language", consts.DefaultInfoLanguage)
 	viper.SetDefault("listenbrainz.enabled", true)
