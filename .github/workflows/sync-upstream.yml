@@ -8,6 +8,8 @@ on:
 jobs:
   sync:
     runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:
       - name: Checkout your repository
         uses: actions/checkout@v4
@@ -57,6 +59,8 @@ jobs:
 
   tag-watcher:
     runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     needs: [sync]
     steps:
       - name: Checkout your repository
