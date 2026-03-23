@@ -25,7 +25,7 @@ type SearchResponse struct {
 }
 
 type ArtistResponse struct {
-	Code int `json:"code"`
+	Code   int `json:"code"`
 	Artist struct {
 		ID        int    `json:"id"`
 		Name      string `json:"name"`
@@ -35,7 +35,7 @@ type ArtistResponse struct {
 }
 
 type ArtistAlbumsResponse struct {
-	Code int `json:"code"`
+	Code      int `json:"code"`
 	HotAlbums []struct {
 		ID     int    `json:"id"`
 		Name   string `json:"name"`
@@ -44,7 +44,7 @@ type ArtistAlbumsResponse struct {
 }
 
 type AlbumResponse struct {
-	Code int `json:"code"`
+	Code  int `json:"code"`
 	Album struct {
 		ID          int    `json:"id"`
 		Name        string `json:"name"`

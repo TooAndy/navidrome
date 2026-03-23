@@ -12,10 +12,10 @@ import (
 )
 
 const (
-	searchURL      = "https://music.163.com/api/search/get/web"
-	artistURL      = "http://music.163.com/api/v1/artist/%d"
+	searchURL       = "https://music.163.com/api/search/get/web"
+	artistURL       = "http://music.163.com/api/v1/artist/%d"
 	artistAlbumsURL = "http://music.163.com/api/artist/albums/%d"
-	albumURL       = "http://music.163.com/api/album/%d"
+	albumURL        = "http://music.163.com/api/album/%d"
 )
 
 type httpDoer interface {

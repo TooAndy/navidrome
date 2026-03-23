@@ -226,15 +226,15 @@ type mockNeteaseClient struct {
 	albumsCalled bool
 	albumCalled  bool
 
-	searchErr     error
-	artistResp    *ArtistResponse
-	artistErr     error
-	albumsResp    *ArtistAlbumsResponse
-	albumsErr     error
-	albumResp     *AlbumResponse
-	albumErr      error
-	findAlbumID   int
-	findAlbumErr  error
+	searchErr    error
+	artistResp   *ArtistResponse
+	artistErr    error
+	albumsResp   *ArtistAlbumsResponse
+	albumsErr    error
+	albumResp    *AlbumResponse
+	albumErr     error
+	findAlbumID  int
+	findAlbumErr error
 }
 
 func (m *mockNeteaseClient) SearchArtist(ctx context.Context, name string) (int, error) {

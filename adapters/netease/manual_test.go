@@ -87,9 +87,9 @@ func getAlbum(ctx context.Context, hc *http.Client, id int) (*AlbumResponse, err
 
 // 响应结构
 type ArtistResponse struct {
-	Code int `json:"code"`
+	Code   int `json:"code"`
 	Artist struct {
-		ID        int `json:"id"`
+		ID        int    `json:"id"`
 		Name      string `json:"name"`
 		PicURL    string `json:"picUrl"`
 		BriefDesc string `json:"briefDesc"`
@@ -97,7 +97,7 @@ type ArtistResponse struct {
 }
 
 type ArtistAlbumsResponse struct {
-	Code int `json:"code"`
+	Code      int `json:"code"`
 	HotAlbums []struct {
 		ID     int    `json:"id"`
 		Name   string `json:"name"`
@@ -106,7 +106,7 @@ type ArtistAlbumsResponse struct {
 }
 
 type AlbumResponse struct {
-	Code int `json:"code"`
+	Code  int `json:"code"`
 	Album struct {
 		ID          int    `json:"id"`
 		Name        string `json:"name"`
