@@ -27,12 +27,34 @@ jobs:
         run: git fetch upstream
 
       - name: Merge upstream changes
-        run: git merge upstream/master
+        run: |
+          # 尝试合并上游更改
+          if git merge upstream/master -X theirs -m "Merge upstream/master"; then
+            echo "Merge successful"
+          else
+            echo "Merge had conflicts, attempting to resolve..."
+            # 优先保留我们的 netease adapter，其他使用上游版本
+            git checkout --ours adapters/netease/
+            git add adapters/netease/
+            # 对于删除的文件（如 spotify），使用上游的决定
+            git status | grep 'deleted by upstream' | awk '{print $4}' | xargs -r git rm
+            git status | grep 'deleted by them' | awk '{print $4}' | xargs -r git rm
+            # 完成合并
+            git merge --continue || echo "Failed to resolve conflicts"
+          fi
+
+      - name: Verify netease adapter is intact
+        run: |
+          if [ ! -f "adapters/netease/agent.go" ]; then
+            echo "ERROR: NetEase adapter was lost during merge!"
+            exit 1
+          fi
+          echo "NetEase adapter verified"
 
       - name: Push changes to your forked repository
         run: |
-          git push --force https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/TooAndy/navidrome.git master
-  
+          git push https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/TooAndy/navidrome.git master
+
   tag-watcher:
     runs-on: ubuntu-latest
     needs: [sync]
@@ -52,8 +74,7 @@ jobs:
           if [ $(git tag | grep $LAST_UPSTREAM_TAG -c) == "0" ]; then
             echo "Created new tag: $LAST_UPSTREAM_TAG"
             git tag "$LAST_UPSTREAM_TAG"
-            git push --force --tags https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/TooAndy/navidrome.git 
+            git push --tags https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/TooAndy/navidrome.git
           else
             echo "find no new tag, exit"
           fi
-          
