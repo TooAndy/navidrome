@@ -12,7 +12,7 @@ jobs:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:
       - name: Checkout your repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           persist-credentials: false
           fetch-depth: 0  # 完整克隆历史
@@ -64,7 +64,7 @@ jobs:
     needs: [sync]
     steps:
       - name: Checkout your repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           persist-credentials: false
           fetch-depth: 0  # 完整克隆历史
